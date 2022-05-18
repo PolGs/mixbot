@@ -1,6 +1,6 @@
 import requests
 import os
-
+import time
 #------------------------------------------------------------------------------
                         #    IMAGESCRAP
                     #Reads URLS from images.txt and
@@ -17,14 +17,17 @@ print(imgUrls)
 #for each url
 for url in imgUrls:
     #Download img from internet
-    r = requests.get(url, allow_redirects=True)
-    imgString = 'a.jpg'
-    open(imgString, 'wb').write(r.content)
-
-
+    os.system("wget -c "+ url + " -O a.jpg")
+    os.system("mv *.jpg a.jpg")
+    #r = requests.get(url, allow_redirects=True)
+    #imgString = './a.jpg'
+    #open(imgString, 'wb').write(r.content)
+    print("Waiting for images...")
+    time.sleep(5)
     #Convert to mp4
-    ffmpegString = 'ffmpeg -loop 1  -t 360 -framerate 10 -i a.jpg a.mp4'
+    ffmpegString = 'ffmpeg -loop 1  -t 60 -framerate 10 -i a.jpg a.mp4'
     os.system(ffmpegString)
+
 
 
 #------------------------------------------------------------------------------
@@ -37,7 +40,9 @@ n=1
 directory = '.'
 commandMergeAux = ""
 for filename in os.listdir(directory):
-    if(filename != "songconc.py"):
+    fname, extension = os.path.splitext(filename)
+    print(extension)
+    if(extension == ".mp3"):
         #f = os.path.join(directory, filename)
         #convert to wav
         #mpg321 -w testing2.wav 0002.mp3
@@ -49,6 +54,7 @@ for filename in os.listdir(directory):
         os.system(commandProc)
         commandMergeAux = commandMergeAux + str(n) + "_proc.wav "
         n=n+1
+
 #merge wavs
 #sox testing_16000_mono_16bit.wav testing2_16000_mono_16bit.wav long.wav
 commandMerge = "sox " + commandMergeAux + "long.wav"
